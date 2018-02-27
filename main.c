@@ -1,11 +1,3 @@
-//
-//  main.c
-//  Decision tree
-//
-//  Created by Roman Ilechko on 26.02.18.
-//  Copyright © 2018 Roman Ilechko. All rights reserved.
-//
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
