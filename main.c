@@ -4,7 +4,7 @@
 
 #define MAX 81
 #define LEN 30
-#define COUNT_CASES 2
+#define COUNT_CASES 10 // ->9
 #define COUNT_FEATURE 3
 
 void read_csv(char* , char (*)[LEN]);
@@ -12,15 +12,19 @@ double gini(double (*)[COUNT_CASES][COUNT_FEATURE], int, int);
 int make_data(double (*)[3], char (*)[LEN]);
 double num_cases(int, int);
 int count(double*, double, int);
-void test_split(double *, double *, int, double, double (*)[3]);
+void test_split(double (*)[COUNT_FEATURE], double (*)[COUNT_FEATURE], int, double, double (*)[COUNT_FEATURE], int* , int*);
 
 int main(int argc, const char * argv[]) {
     char data[COUNT_CASES][LEN], path[] = "banknote.csv";
-    double converted_data[COUNT_CASES][COUNT_FEATURE];
-    int len;
+    double converted_data[COUNT_CASES][COUNT_FEATURE], splited[2][COUNT_CASES][COUNT_FEATURE];
+    int len, len1, len2;
     
 
     len = make_data(converted_data, data);
+    test_split(splited[0], splited[1], 0, converted_data[0][0], converted_data, &len1, &len2);
+    printf("Hello world!");
+    double g = gini(splited, len1, len2);
+    printf("gini %lf ",g);
     return 0;
 }
 
@@ -88,30 +92,21 @@ int count(double* arr, double numb, int len){
     return c;
 }
 
-void test_split(double *left, double *right, int index, double value, double (*data)[3]){
+void test_split(double (*left)[COUNT_FEATURE], double (*right)[COUNT_FEATURE], int index, double value, double (*data)[COUNT_FEATURE], int* len1, int* len2){
     int l = 0, r = 0;
-    for(int feature = 0; feature < COUNT_FEATURE; feature++){
+    for(int feature = 0; feature < COUNT_CASES; feature++){
         if (data[feature][index] < value){
-            left[l] = data[feature][index];
+            for(int f = 0; f < COUNT_FEATURE; f++)
+                left[l][f] = data[feature][f];
             l++;
         }else{
-            right[r] = data[feature][index];
+            for(int f = 0; f < COUNT_FEATURE; f++)
+                right[r][f] = data[feature][f];
             r++;
         }
     }
-    if(l > r){
-        for(int i = r; i < COUNT_FEATURE;i++){
-            right[i] = 0;
-            if(i == l)
-                left[i] = 0;
-        }
-    }else{
-        for(int i = l; i < COUNT_FEATURE;i++){
-            left[i] = 0;
-            if(i == r)
-                right[i] = 0;
-        }
-    }
+    *len1 = l;
+    *len2 = r;
 }
 
 //def test_split(index, value, dataset):
