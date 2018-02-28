@@ -12,14 +12,14 @@ double gini(double (*)[COUNT_CASES][COUNT_FEATURE], int, int);
 int make_data(double (*)[3], char (*)[LEN]);
 double num_cases(int, int);
 int count(double*, double, int);
+void test_split(double *, double *, int, double, double (*)[3]);
 
 int main(int argc, const char * argv[]) {
     char data[COUNT_CASES][LEN], path[] = "banknote.csv";
     double converted_data[COUNT_CASES][COUNT_FEATURE];
     int len;
     
-    
-    read_csv(path, data);
+
     len = make_data(converted_data, data);
     return 0;
 }
@@ -87,3 +87,39 @@ int count(double* arr, double numb, int len){
     
     return c;
 }
+
+void test_split(double *left, double *right, int index, double value, double (*data)[3]){
+    int l = 0, r = 0;
+    for(int feature = 0; feature < COUNT_FEATURE; feature++){
+        if (data[feature][index] < value){
+            left[l] = data[feature][index];
+            l++;
+        }else{
+            right[r] = data[feature][index];
+            r++;
+        }
+    }
+    if(l > r){
+        for(int i = r; i < COUNT_FEATURE;i++){
+            right[i] = 0;
+            if(i == l)
+                left[i] = 0;
+        }
+    }else{
+        for(int i = l; i < COUNT_FEATURE;i++){
+            left[i] = 0;
+            if(i == r)
+                right[i] = 0;
+        }
+    }
+}
+
+//def test_split(index, value, dataset):
+//left, right = list(), list()
+//for row in dataset:
+//if row[index] < value:
+//left.append(row)
+//else:
+//right.append(row)
+//return left, right
+
