@@ -1,46 +1,19 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include "setting.h"
 
-#define MAX 81                  // <-   settings for
-#define LEN 30                  // <-   file reading
-
-#define COUNT_CLASES 2         // <-   setings for
-#define COUNT_CASES 10          // <-   your dataset
-#define COUNT_FEATURE 3         // <-
-
-#define INDEX 0                 // <-  don't
-#define VALUE 1                 // <-  touch this
-
-void read_csv(char* , char (*)[LEN]);
-double gini(double (*)[COUNT_CASES][COUNT_FEATURE], int, int);
-int make_data(double (*)[3], char (*)[LEN]);
-double num_cases(int, int);
-int count(double*, double, int);
-void test_split(double (*)[COUNT_FEATURE], double (*)[COUNT_FEATURE], int, double, double (*)[COUNT_FEATURE], int* , int*);
-void make_split(double (*)[COUNT_FEATURE], double (*)[COUNT_CASES][COUNT_FEATURE], double*);
 
 int main(int argc, const char * argv[]) {
-    char data[COUNT_CASES][LEN], path[] = "banknote.csv";
-    double converted_data[COUNT_CASES][COUNT_FEATURE], splited[COUNT_CLASES][COUNT_CASES][COUNT_FEATURE], gini_value;
+    char data[COUNT_CASES][LEN];
+    double converted_data[COUNT_CASES][COUNT_FEATURE], splited[COUNT_CLASES][COUNT_CASES][COUNT_FEATURE];
     double best_split[2];
-    int len, len1, len2;
+    int len;
     
-
     len = make_data(converted_data, data);
     make_split(converted_data, splited, best_split);
     
     return 0;
 }
 
-void read_csv(char* path, char data[][LEN]){
-    int n = 0;
-    char buf[LEN];
-    FILE *file = fopen(path, "rb");
-    
-    while(fgets(buf, MAX, file) != NULL)
-        strcpy(data[n], buf);
-}
+
 
 int make_data(double (*data)[COUNT_FEATURE], char (*data_str)[LEN]){
      double info[] = {2.771244718,1.784783929,0, 1.728571309,1.169761413,0,
