@@ -4,6 +4,7 @@
 
 #define MAX 81
 #define LEN 30
+#define COUUNT_CLASES 2
 #define COUNT_CASES 10 // ->9
 #define COUNT_FEATURE 3
 
@@ -16,15 +17,14 @@ void test_split(double (*)[COUNT_FEATURE], double (*)[COUNT_FEATURE], int, doubl
 
 int main(int argc, const char * argv[]) {
     char data[COUNT_CASES][LEN], path[] = "banknote.csv";
-    double converted_data[COUNT_CASES][COUNT_FEATURE], splited[2][COUNT_CASES][COUNT_FEATURE];
+    double converted_data[COUNT_CASES][COUNT_FEATURE], splited[2][COUNT_CASES][COUNT_FEATURE], gini_value;
     int len, len1, len2;
     
 
     len = make_data(converted_data, data);
     test_split(splited[0], splited[1], 0, converted_data[0][0], converted_data, &len1, &len2);
-    printf("Hello world!");
-    double g = gini(splited, len1, len2);
-    printf("gini %lf ",g);
+    gini_value = gini(splited, len1, len2);
+    
     return 0;
 }
 
@@ -51,26 +51,26 @@ int make_data(double (*data)[COUNT_FEATURE], char (*data_str)[LEN]){
     return len;
 }
 
-double gini(double (*converted_data)[COUNT_CASES][COUNT_FEATURE], int len1, int len){
+double gini(double (*converted_data)[COUNT_CASES][COUNT_FEATURE], int len1, int len2){
     double gini_index = 0.0, cases;
-    double arr[len > len1 ? len : len1], p;
-    int size[] = {len, len1}, T;
+    double arr[COUNT_CASES], p;
+    int size[] = {len1, len2}, T;
     
-    cases = num_cases(len, len1);
+    cases = num_cases(len2, len1);
     
-    for(int i = 0;i < COUNT_CASES; i++){
-        if(size[0] == 0 || size[1] == 0)
+    for(int i = 0;i < COUUNT_CLASES; i++){
+        if(size[i] == 0)
             continue;
-        int estimation = 0.0;
+        double estimation = 0.0;
         
         if(i == 0)
-            T = len;
-        else
             T = len1;
-        for(int class = 0; class < 2; class++){
+        else
+            T = len2;
+        for(int class = 0; class < COUUNT_CLASES; class++){
             for(int t = 0; t < T; t++)
-                arr[t] = converted_data[i][t][T - 1];
-            p = count(arr, class, T) / size[class];
+                arr[t] = converted_data[i][t][COUNT_FEATURE - 1];
+            p = count(arr, class, T) / (double)size[i];
             estimation += p * p;
         }
         gini_index += (1.0 - estimation) * (size[i] / cases);
