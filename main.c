@@ -5,7 +5,7 @@
 #define MAX 81
 #define LEN 30
 #define COUUNT_CLASES 2
-#define COUNT_CASES 10 // ->9
+#define COUNT_CASES 10
 #define COUNT_FEATURE 3
 
 void read_csv(char* , char (*)[LEN]);
@@ -17,7 +17,7 @@ void test_split(double (*)[COUNT_FEATURE], double (*)[COUNT_FEATURE], int, doubl
 
 int main(int argc, const char * argv[]) {
     char data[COUNT_CASES][LEN], path[] = "banknote.csv";
-    double converted_data[COUNT_CASES][COUNT_FEATURE], splited[2][COUNT_CASES][COUNT_FEATURE], gini_value;
+    double converted_data[COUNT_CASES][COUNT_FEATURE], splited[COUUNT_CLASES][COUNT_CASES][COUNT_FEATURE], gini_value;
     int len, len1, len2;
     
 
