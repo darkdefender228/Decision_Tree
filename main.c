@@ -2,11 +2,15 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define MAX 81
-#define LEN 30
-#define COUUNT_CLASES 2
-#define COUNT_CASES 10
-#define COUNT_FEATURE 3
+#define MAX 81                  // <-   settings for
+#define LEN 30                  // <-   file reading
+
+#define COUNT_CLASES 2         // <-   setings for
+#define COUNT_CASES 10          // <-   your dataset
+#define COUNT_FEATURE 3         // <-
+
+#define INDEX 0                 // <-  don't
+#define VALUE 1                 // <-  touch this
 
 void read_csv(char* , char (*)[LEN]);
 double gini(double (*)[COUNT_CASES][COUNT_FEATURE], int, int);
@@ -14,16 +18,17 @@ int make_data(double (*)[3], char (*)[LEN]);
 double num_cases(int, int);
 int count(double*, double, int);
 void test_split(double (*)[COUNT_FEATURE], double (*)[COUNT_FEATURE], int, double, double (*)[COUNT_FEATURE], int* , int*);
+void make_split(double (*)[COUNT_FEATURE], double (*)[COUNT_CASES][COUNT_FEATURE], double*);
 
 int main(int argc, const char * argv[]) {
     char data[COUNT_CASES][LEN], path[] = "banknote.csv";
-    double converted_data[COUNT_CASES][COUNT_FEATURE], splited[COUUNT_CLASES][COUNT_CASES][COUNT_FEATURE], gini_value;
+    double converted_data[COUNT_CASES][COUNT_FEATURE], splited[COUNT_CLASES][COUNT_CASES][COUNT_FEATURE], gini_value;
+    double best_split[2];
     int len, len1, len2;
     
 
     len = make_data(converted_data, data);
-    test_split(splited[0], splited[1], 0, converted_data[0][0], converted_data, &len1, &len2);
-    gini_value = gini(splited, len1, len2);
+    make_split(converted_data, splited, best_split);
     
     return 0;
 }
@@ -33,7 +38,7 @@ void read_csv(char* path, char data[][LEN]){
     char buf[LEN];
     FILE *file = fopen(path, "rb");
     
-    while(fgets(buf,MAX,file) != NULL)
+    while(fgets(buf, MAX, file) != NULL)
         strcpy(data[n], buf);
 }
 
@@ -58,7 +63,7 @@ double gini(double (*converted_data)[COUNT_CASES][COUNT_FEATURE], int len1, int 
     
     cases = num_cases(len2, len1);
     
-    for(int i = 0;i < COUUNT_CLASES; i++){
+    for(int i = 0;i < COUNT_CLASES; i++){
         if(size[i] == 0)
             continue;
         double estimation = 0.0;
@@ -67,7 +72,7 @@ double gini(double (*converted_data)[COUNT_CASES][COUNT_FEATURE], int len1, int 
             T = len1;
         else
             T = len2;
-        for(int class = 0; class < COUUNT_CLASES; class++){
+        for(int class = 0; class < COUNT_CLASES; class++){
             for(int t = 0; t < T; t++)
                 arr[t] = converted_data[i][t][COUNT_FEATURE - 1];
             p = count(arr, class, T) / (double)size[i];
@@ -107,5 +112,26 @@ void test_split(double (*left)[COUNT_FEATURE], double (*right)[COUNT_FEATURE], i
     }
     *len1 = l;
     *len2 = r;
+}
+
+void make_split(double (*dataset)[COUNT_FEATURE], double (*best_groups)[COUNT_CASES][COUNT_FEATURE], double* best_split){
+    double gini_value;
+    double best_index = 100000, best_estimation = 100000, best_value = 100000;
+    int len1, len2;
+    
+    for(int i = 0; i < COUNT_FEATURE - 1; i++){
+        for(int j = 0; j < COUNT_CASES; j++){
+            test_split(best_groups[0], best_groups[1], i, dataset[j][i], dataset, &len1, &len2);
+            gini_value = gini(best_groups, len1, len2);
+            
+            if(gini_value < best_estimation){
+                best_index = i;
+                best_value = dataset[j][i];
+                best_estimation = gini_value;
+            }
+        }
+    }
+    best_split[INDEX] = best_index;
+    best_split[VALUE] = best_value;
 }
 
